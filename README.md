@@ -33,6 +33,13 @@ As in previous interviews, you may consult official docs and reference-style res
 - run the command `npm t`
 - You should see output from 10 integration tests, some will be failing.
 
+> **NOTE:** Due to some deployment requirements you will need to use Postgres version 8
+> if you are using Node 14. Use Postgres version 7 if you are using Node 12. To change
+> your version of Node you can use [nvm](https://github.com/nvm-sh/nvm#install--update-script).
+> 
+> If you decide to use Node 12 and Postgres 7 you will need to set
+> `ssl: process.env.NODE_ENV === "production"` in postgrator-config  and `pg.defaults.ssl = process.env.NODE_ENV === "production"` in `server.js`
+
 ## Exercise
 
 1. Add the GET (all) endpoint to this application.
