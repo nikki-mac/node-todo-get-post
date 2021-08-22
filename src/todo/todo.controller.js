@@ -1,33 +1,80 @@
 const service = require('./todo.service')
-const db = require('../db/connection')
+const path = require('path')
+const xss = require('xss')
 
-async function list(req, res, next) {
-    const data = await service.list(db)
+const serializeTodo = todo => ({
+  id: todo.id,
+  title: xss(todo.title),
+  completed: todo.completed
+})
+
+function idIsValid(req, res, next) {
+    if(isNaN(parseInt(req.params.todo_id))) {
+        return res.status(404).json({
+            error: { message: `Invalid id` }
+        })
+    } else {
+        next()
+    }
+}
+
+async function list(req, res) {
+    const data = await service.list()
     res.status(200).json(data)
 }
 
+async function create(req, res) {
+    const { title, completed = false } = req.body
+    const newTodo = { title, completed }
 
-function create(res, res) {
-    
+    if(!req.body['title']) {
+      res.status(400).end()
+      return
+    }
+
+    const todo = await service.create(newTodo)
+    res.status(201)
+     .location(path.posix.join(req.originalUrl, `/${todo.id}`))
+     .json(todo)
 }
 
-function update(res, res) {
+async function update(req, res) {
+    const { todo_id } = req.params
+    const { title, completed } = req.body
+    const todoToUpdate = { title, completed }
 
+    const numberOfValues = Object.values(todoToUpdate).filter(Boolean).length
+    if (numberOfValues === 0)
+      return res.status(400).json({
+        error: {
+          message: `Request body must content either 'title' or 'completed'`
+        }
+      })
+
+    const updated = await service.update(todo_id, todoToUpdate)
+    res.status(200).json(serializeTodo(updated[0]))
 }
 
-function read(res, res) {
-    
+async function read(req, res) {
+    const todo = await service.read(req.params.todo_id)
+    if (!todo) {
+        return res.status(404).json({
+        error: { message: `Todo doesn't exist` }
+        })
+    }
+    res.json(serializeTodo(todo))
 }
 
-function destroy(res, res) {
-    
+async function destroy(req, res) {
+    const { todo_id } = req.params
+    await service.destroy(todo_id)
+    res.status(204).end()
 }
-
 
 module.exports = {
     list,
     create,
-    update,
-    read,
-    destroy,
+    update: [idIsValid, update],
+    read: [idIsValid, read],
+    destroy: [idIsValid, destroy],
 }

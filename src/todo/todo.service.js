@@ -1,52 +1,9 @@
 const db = require('../db/connection')
+const table = 'todo'
 
-// const service = {
-//   list(db) {
-//     return db
-//       .from('todo')
-//       .select(
-//         'todo.id',
-//         'todo.title',
-//         'todo.completed',
-//       )
-//   },
-//   getTodoById(db, todo_id) {
-//     return db
-//       .from('todo')
-//       .select(
-//         'todo.id',
-//         'todo.title',
-//         'todo.completed',
-//       )
-//       .where('todo.id', todo_id)
-//       .first()
-//   },
-//   insertTodo(db, newTodo) {
-//     return db
-//       .insert(newTodo)
-//       .into('todo')
-//       .returning('*')
-//       .then(rows => {
-//         return rows[0]
-//       })
-//   },
-//   deleteTodo(db, todo_id) {
-//     return db('todo')
-//       .where({'id': todo_id})
-//       .delete()
-//   },
-//   updateTodo(db, todo_id, newTodo) {
-//     return db('todo')
-//       .where({id: todo_id})
-//       .update(newTodo, returning=true)
-//       .returning('*')
-//   }
-
-// }
-
-function list(db) {
+function list() {
   return db
-    .from('todo')
+    .from(table)
     .select(
       'todo.id',
       'todo.title',
@@ -54,6 +11,45 @@ function list(db) {
     )
 }
 
+function read(todo_id) {
+  return db
+    .from(table)
+    .select(
+      'todo.id',
+      'todo.title',
+      'todo.completed',
+    )
+    .where('todo.id', todo_id)
+    .first()
+}
+
+function create(newTodo) {
+  return db
+    .insert(newTodo)
+    .into(table)
+    .returning('*')
+    .then(rows => {
+      return rows[0]
+    })
+}
+
+function update(todo_id, newTodo) {
+  return db(table)
+    .where({id: todo_id})
+    .update(newTodo, returning=true)
+    .returning('*')
+}
+
+function destroy(todo_id) {
+  return db(table)
+    .where({'id': todo_id})
+    .delete()
+}
+
 module.exports = {
-  list
+  list,
+  read,
+  create,
+  update,
+  destroy,
 }
