@@ -18,9 +18,6 @@ function idIsValid(req, res, next) {
     }
 }
 
-
-
-
 async function update(req, res) {
     const { todo_id } = req.params
     const { title, completed } = req.body

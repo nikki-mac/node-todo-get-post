@@ -24,10 +24,8 @@ As in previous interviews, you may consult official docs and reference-style res
 - Create a database for the exercise with your user as the owner
 - Rename the `example.env` file to `.env` and update the following fields with your database credentials:
   ```
-   MIGRATION_DB_NAME=
-   MIGRATION_DB_USER=
-   MIGRATION_DB_PASS=
-   DB_URL="postgresql://USERNAME@localhost/DATABASE_NAME"
+   TEST_DB_URL = <elehpantsql url>
+   DB_URL = <elehpantsql url>
   ```
 - Run the command `npm run migrate -- 1` to create the database tables
 - run the command `npm t`
