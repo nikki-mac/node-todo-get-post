@@ -18,25 +18,8 @@ function idIsValid(req, res, next) {
     }
 }
 
-async function list(req, res) {
-    const data = await service.list()
-    res.status(200).json(data)
-}
 
-async function create(req, res) {
-    const { title, completed = false } = req.body
-    const newTodo = { title, completed }
 
-    if(!req.body['title']) {
-      res.status(400).end()
-      return
-    }
-
-    const todo = await service.create(newTodo)
-    res.status(201)
-     .location(path.posix.join(req.originalUrl, `/${todo.id}`))
-     .json(todo)
-}
 
 async function update(req, res) {
     const { todo_id } = req.params
@@ -72,8 +55,6 @@ async function destroy(req, res) {
 }
 
 module.exports = {
-    list,
-    create,
     update: [idIsValid, update],
     read: [idIsValid, read],
     destroy: [idIsValid, destroy],
