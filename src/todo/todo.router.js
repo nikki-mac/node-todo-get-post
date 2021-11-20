@@ -3,8 +3,8 @@ const controller = require("./todo.controller");
 
 router
   .route("/")
-  .get(/* Your code here */)
-  .post(/* Your code here */)
+  .get(controller.list) //routed GET
+  .post(controller.create) //routed POST
 
 router
   .route("/:todo_id")
