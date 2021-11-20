@@ -2,6 +2,7 @@ const service = require('./todo.service')
 const path = require('path')
 const xss = require('xss')
 
+//middleware validation
 const serializeTodo = todo => ({
   id: todo.id,
   title: xss(todo.title),
@@ -16,6 +17,15 @@ function idIsValid(req, res, next) {
     } else {
         next()
     }
+}
+
+
+
+
+//CRUD methods
+async function create(req, res) {
+    const data = await service.create(req.body.data);
+    res.status(201).json({ data });
 }
 
 async function update(req, res) {
@@ -35,6 +45,7 @@ async function update(req, res) {
     res.status(200).json(serializeTodo(updated[0]))
 }
 
+
 async function read(req, res) {
     const todo = await service.read(req.params.todo_id)
     if (!todo) {
@@ -51,8 +62,15 @@ async function destroy(req, res) {
     res.status(204).end()
 }
 
+async function list(req, res, next) {
+    const data = await service.list();
+    res.json({ data });
+}
+
 module.exports = {
+    create,
     update: [idIsValid, update],
     read: [idIsValid, read],
     destroy: [idIsValid, destroy],
-}
+    list,
+};
